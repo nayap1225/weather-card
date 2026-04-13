@@ -149,3 +149,79 @@ export interface DustData {
   khaiGrade: string;
 }
 ```
+
+---
+
+### 🔄 실행 기록
+
+- 날짜: 2026-04-13
+- 워크플로우: API 상세 필드 정의 보완
+- 요청 요약: 응답 데이터(nx, ny 등)의 의미와 설명 추가
+
+## 📝 상세 필드 정의 보완 (v1.1)
+
+기존 스키마 가이드에서 생략되었던 각 응답 필드의 상세 의미와 데이터 형식을 보완합니다.
+
+### 1. 기상청 단기예보 필드 정의
+| 필드명 | 의미 | 상세 설명 |
+| :--- | :--- | :--- |
+| **baseDate** | 발표 일자 | 예보를 발표한 날짜 (YYYYMMDD) |
+| **baseTime** | 발표 시각 | 예보를 발표한 시간 (HHMM) |
+| **fcstDate** | 예보 일자 | 예측 대상 날짜 (YYYYMMDD) |
+| **fcstTime** | 예보 시각 | 예측 대상 시간 (HHMM) |
+| **fcstValue** | 예보 값 | 해당 항목(category)의 예측 수치 |
+| **nx** | X 좌표 | 기상청 격자 좌표 X (위경도 아님) |
+| **ny** | Y 좌표 | 기상청 격자 좌표 Y (위경도 아님) |
+| **category** | 항목 코드 | 기온(TMP), 하늘(SKY), 강수(PTY) 등 구분 코드 |
+
+### 2. 에어코리아 실시간 대기측정 필드 정의
+| 필드명 | 의미 | 상세 설명 |
+| :--- | :--- | :--- |
+| **dataTime** | 측정 시각 | 대기질 정보가 측정된 일시 (YYYY-MM-DD HH:mm) |
+| **stationName** | 측정소명 | 데이터를 수집한 관측소 이름 (예: 강남구) |
+| **pm10Value** | 미세먼지 농도 | PM10 농도 (㎍/㎥) |
+| **pm10Grade** | 미세먼지 등급 | PM10 등급 (1:좋음, 2:보통, 3:나쁨, 4:매우나쁨) |
+| **pm25Value** | 초미세먼지 농도| PM25 농도 (㎍/㎥) |
+| **pm25Grade** | 초미세먼지 등급| PM25 등급 (1~4) |
+| **khaiValue** | 통합대기환경지수| 종합적인 대기 상태 수치 |
+| **khaiGrade** | 통합대기환경등급| 종합 대기 상태 등급 (1~4) |
+
+### 3. 카카오 로컬(주소) 필드 정의
+| 필드명 | 의미 | 상세 설명 |
+| :--- | :--- | :--- |
+| **address_name** | 전체 주소 | 지번 주소 또는 도로명 주소 전체 명칭 |
+| **region_1depth_name**| 시/도 | 광역 단위 (예: 서울특별시, 경기도) |
+| **region_2depth_name**| 구/군 | 기초 단위 (예: 강남구, 성남시 분당구) |
+| **region_3depth_name**| 동/읍/면 | 행정구역 단위 (예: 정자동) |
+| **x / y** | 경도 / 위도 | WGS84 좌표계 기준 (x:경도, y:위도) |
+
+### 💻 보완된 TypeScript Interface
+
+```typescript
+/**
+ * 기상청 단기예보 개별 항목
+ */
+export interface WeatherItem {
+  category: string;   // 항목 코드 (예: TMP, SKY)
+  fcstDate: string;   // 예보 일자 (YYYYMMDD)
+  fcstTime: string;   // 예보 시각 (HHMM)
+  fcstValue: string;  // 예보 값
+  nx: number;         // 예보 지점 X 좌표
+  ny: number;         // 예보 지점 Y 좌표
+}
+
+/**
+ * 에어코리아 대기질 측정 데이터
+ */
+export interface DustData {
+  dataTime: string;    // 측정 시간
+  stationName: string; // 측정소 이름
+  pm10Value: string;   // 미세먼지 농도
+  pm10Grade: string;   // 미세먼지 등급 (1~4)
+  pm25Value: string;   // 초미세먼지 농도
+  pm25Grade: string;   // 초미세먼지 등급 (1~4)
+  khaiValue: string;   // 통합대기환경지수
+  khaiGrade: string;   // 통합대기환경등급 (1~4)
+}
+```
+
